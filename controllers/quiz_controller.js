@@ -21,9 +21,22 @@ exports.load = function (req, res, next, quizId){
 };
 
 exports.index = function(req, res){
-    models.Quiz.findAll().then(function(quizes) {
-        res.render('quizes/index.ejs', { quizes: quizes});
-    }).catch(function(error){next(error)})
+    if(req.query.search){
+        var texto = req.query.search;
+        texto = texto.replace(new RegExp(" ", 'g'), "%");
+        texto = "%"+texto+"%";
+        models.Quiz.findAll({where:["pregunta like ?",texto],order:[['pregunta','DESC']]}).then(function (quizes) {
+            res.render('quizes/index.ejs', {quizes: quizes});
+        }).catch(function (error) {
+            res.render('quizes/index.ejs', {quizes: []});
+        })
+    }else{
+        models.Quiz.findAll().then(function (quizes) {
+            res.render('quizes/index.ejs', {quizes: quizes});
+        }).catch(function (error) {
+            //next(error)
+        })
+    }
 };
 
 exports.show = function (req, res){
