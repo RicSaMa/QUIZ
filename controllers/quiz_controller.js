@@ -52,27 +52,23 @@ exports.answer = function (req, res){
         resultado = 'Correcto';
     }
     res.render('quizes/answer',{quiz: req.quiz, respuesta: resultado});
-}
-
-/*exports.answer = function (req, res){
-    models.Quiz.find(req.params.quizId).then(function(quiz) {
-        if (req.query.respuesta === quiz.respuesta){
-            res.render('quizes/answer',{quiz: quiz, respuesta: 'Correcto'});
-        } else {
-            res.render('quizes/answer', {quiz: quiz, respuesta: 'Incorrecto'});
-        }
-    })
-};*/
-/*exports.answer = function (req, res){
-    models.Quiz.findAll().success(function (quiz){
-        if (req.query.respuesta === quiz[0].respuesta){
-            res.render('quizes/answer',{respuesta: 'Correcto'});
-        } else {
-            res.render('quizes/answer', {respuesta: 'Incorrecto'});
-        }
-    })
-};*/
+};
 
 exports.author = function (req, res) {
     res.render('author');
-}
+};
+
+exports.new = function (req, res){
+    var quiz = models.Quiz.build(
+        {pregunta:"Pregunta", respuesta:"Respuesta"}
+    );
+    res.render('quizes/new',{quiz:quiz});
+};
+
+exports.create = function (req, res){
+    var quiz = models.Quiz.build(req.body.quiz);
+
+    quiz.save({fields: ["pregunta","respuesta"]}).then(function(){
+        res.redirect('/quizes');
+    })
+};
