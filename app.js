@@ -41,6 +41,23 @@ app.use(function(req, res, next) {
     next();
 });
 
+app.use(function(req, res, next){
+    var ahora = new Date().getTime();
+    if(req.session.user){
+        if (req.session.user.ultimallamada){
+            if(ahora > req.session.user.ultimallamada + 2*60*1000){
+                delete req.session.user;
+                //req.session.errors = [{"message":'Sesion caducada, introduce tus credenciales otra vez'}];
+                res.redirect('/login');
+                return;
+            }
+        } else {
+            req.session.user.ultimallamada = ahora;
+        }
+    }
+    next();
+});
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler
